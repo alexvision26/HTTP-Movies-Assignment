@@ -24,9 +24,9 @@ const App = () => {
     setSavedList([...savedList, movie]);
   };
 
-  const editMovie = ev => {
-    ev.preventDefault();
-  }
+  // const editMovie = ev => {
+  //   ev.preventDefault();
+  // }
 
   useEffect(() => {
     getMovieList();
@@ -44,9 +44,13 @@ const App = () => {
         <Movie addToSavedList={addToSavedList} />
       </Route>
 
-      <Route path="/update-movie/:id">
-        <UpdateMovie editMovie={editMovie} />
-      </Route>
+      <Route
+        path="/update-movie/:id"
+        render={props => (
+          <UpdateMovie {...props} setMovieList={setMovieList} movieList={movieList} />
+        )}
+      />
+        
     </>
   );
 };

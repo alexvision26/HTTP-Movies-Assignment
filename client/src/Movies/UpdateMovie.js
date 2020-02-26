@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Route, Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const initialItem = {
     title: '',
@@ -10,17 +10,54 @@ const initialItem = {
 }
 
 const UpdateMovie = props => {
+    const [item, setItem] = useState(initialItem)
+    const { id } = useParams();
 
+    useEffect(() => {
+        console.log(props.movieList)
+        const movieToUpdate = props.movieList.find(items => `${items.id}` === id)
+        console.log(movieToUpdate)
+        if (movieToUpdate) {
+            setItem(movieToUpdate)
+        }
+    }, [props.movieList, id])
+
+    const handleChange = ev => {
+        // ev.persist();
+        let value = ev.target.value;
+        if (ev.target.name === 'metascore') {
+            value = parseInt(value)
+        }
+
+        setItem({
+            ...item,
+            [ev.target.name]: value
+        })
+    }
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        axios.put(`http://localhost:5000/api/movies/${id}`, item)
+        .then(res => {
+            console.log(res.data)
+            props.setMovieList([res.data]);
+            props.history.push(`/movies/${id}`)
+            // console.log(props.movieList)
+        })
+        .catch(err => console.log(err))
+    }
 
     return (
         <div className='update-movie'>
         <h2>Update Movie</h2>
 
-        <form>
+        <form onSubmit={handleSubmit}>
             <input
                 type='text'
                 name='title'
                 placeholder='Title..'
+                onChange={handleChange}
+                value={item.title}
                 />
             <div className='split'/>
 
@@ -28,6 +65,8 @@ const UpdateMovie = props => {
                 type='text'
                 name='director'
                 placeholder='Director..'
+                onChange={handleChange}
+                value={item.director}
                 />
             <div className='split'/>
 
@@ -35,6 +74,8 @@ const UpdateMovie = props => {
                 type='number'
                 name='metascore'
                 placeholder='Metascore Rating..'
+                onChange={handleChange}
+                value={item.metascore}
                 />
             <div className='split'/>
 
@@ -42,6 +83,8 @@ const UpdateMovie = props => {
                 type='text'
                 name='stars'
                 placeholder='Stars..'
+                onChange={handleChange}
+                value={item.stars}
                 />
             <div className='split'/>
 
