@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useRouteMatch, Link } from 'react-router-dom';
 import MovieCard from './MovieCard';
 
+import reloadPage from '../utils/reloadPage';
+
 const Movie = props => {
   const [movie, setMovie] = useState(null);
   const match = useRouteMatch();
@@ -25,6 +27,8 @@ const Movie = props => {
     axios.delete(`http://localhost:5000/api/movies/${movie.id}`)
     .then(res => {
       console.log(res)
+      props.history.push('/')
+      reloadPage();
     })
     .catch(err => console.log(err))
   }
